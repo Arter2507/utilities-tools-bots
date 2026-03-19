@@ -1,0 +1,35 @@
+# Dependencies & builds
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dist-ssr/
+**/dist-ssr/
+
+# Environment & secrets
+.env
+.env.*
+*.local
+
+# Tooling caches & OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local agent/workspace folders (keep out of git)
+docs/
+.agent/
+.claude/
+.codebuddy/
+.codex/
+.continue/
+.cursor/
+.gemini/
+.kiro/
+.opencode/
+.qoder/
+.roo/
+.trae/
+.windsurf/
+.github/

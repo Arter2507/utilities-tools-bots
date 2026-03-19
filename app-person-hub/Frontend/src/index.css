@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 35 52% 96%;
+    --foreground: 24 28% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 28% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 28% 12%;
+    --primary: 24 86% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 35% 92%;
+    --secondary-foreground: 24 28% 18%;
+    --muted: 30 30% 90%;
+    --muted-foreground: 24 16% 42%;
+    --accent: 28 44% 88%;
+    --accent-foreground: 24 28% 16%;
+    --destructive: 0 78% 62%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 20% 85%;
+    --input: 30 20% 85%;
+    --ring: 24 86% 65%;
+    --weekend-sun: 12 82% 62%;
+    --weekend-sat: 197 70% 46%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 46% 9%;
+    --foreground: 210 40% 96%;
+    --card: 224 38% 13%;
+    --card-foreground: 210 40% 96%;
+    --popover: 224 38% 13%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 200 80% 68%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 220 30% 20%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 220 26% 20%;
+    --muted-foreground: 215 20% 70%;
+    --accent: 218 30% 24%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 60% 36%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 25% 24%;
+    --input: 220 25% 24%;
+    --ring: 200 80% 68%;
+    --weekend-sun: 10 80% 70%;
+    --weekend-sat: 195 70% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, hsl(var(--primary) / 0.18), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, hsl(var(--accent) / 0.35), transparent 55%);
+    background-attachment: fixed;
+  }
+}
+
+.dark body {
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, hsl(var(--primary) / 0.2), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, hsl(var(--accent) / 0.25), transparent 55%);
+}
+
+/* Custom Scrollbar for better UI/UX */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/50;
+}

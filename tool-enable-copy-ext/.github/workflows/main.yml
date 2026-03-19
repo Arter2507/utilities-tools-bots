@@ -1,0 +1,22 @@
+name: Use PAT Token
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  run-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use CODEX_PAT
+        env:
+          CODEX_PAT: ${{ secrets.CODEX_PAT }}
+        run: |
+          echo "Token loaded"
+          echo $CODEX_PAT | head -c 10

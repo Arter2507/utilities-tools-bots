@@ -1,0 +1,38 @@
+[
+  {
+    "id": "gcal-1",
+    "title": "Product Sync",
+    "date": "2026-03-17",
+    "startTime": "09:30",
+    "endTime": "10:15",
+    "notes": "Weekly calendar alignment",
+    "color": "#7AB8F5",
+    "priority": "high",
+    "createdAt": "2026-03-15T09:00:00.000Z",
+    "source": "google"
+  },
+  {
+    "id": "gcal-2",
+    "title": "Design Review",
+    "date": "2026-03-20",
+    "startTime": "14:00",
+    "endTime": "15:00",
+    "notes": "Review CalendarManager UI",
+    "color": "#F59E7A",
+    "priority": "medium",
+    "createdAt": "2026-03-15T11:30:00.000Z",
+    "source": "google"
+  },
+  {
+    "id": "gcal-3",
+    "title": "Family Dinner",
+    "date": "2026-03-21",
+    "startTime": "18:30",
+    "endTime": "20:00",
+    "notes": "",
+    "color": "#F38BA8",
+    "priority": "low",
+    "createdAt": "2026-03-15T13:15:00.000Z",
+    "source": "google"
+  }
+]

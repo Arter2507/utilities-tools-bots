@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Syntax check
+        run: npm run check
+
+      - name: Dry pack
+        run: npm run pack:dry
+
+      - name: Non-interactive smoke test
+        run: |
+          node index.js ./tmp-project \
+            --non-interactive \
+            --no-kits \
+            --skip-design \
+            --agent-name HEYAI
