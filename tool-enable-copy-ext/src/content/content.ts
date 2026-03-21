@@ -10,7 +10,6 @@ const BLOCKED_EVENTS = [
   'contextmenu',
   'copy',
   'cut',
-  'paste',
   'selectstart',
   'mousedown',
   'keydown',
@@ -48,13 +47,52 @@ function handleBlockedEvent(event: Event): void {
     showCopyPreview(selected);
   }
 
-  if (event instanceof KeyboardEvent) {
-    const key = event.key.toLowerCase();
-    const isShortcut = (event.ctrlKey || event.metaKey) && ['c', 'x', 'v', 'a'].includes(key);
-    if (!isShortcut) return;
+  // We previously added event.preventDefault() here to stop sites from showing warnings.
+  // HOWEVER, calling preventDefault() on 'copy' or 'contextmenu' actually stops the BROWSER 
+  // from copying to clipboard or opening the right-click menu! 
+  // We MUST NOT call preventDefault() on these events.
+  // Stopping propagation is enough to prevent the site's anti-copy script from firing.
+
+  // Smart Event Unblocking
+  let shouldStopPropagation = true;
+
+  if (event.type === 'mousedown') {
+    const mouseEvent = event as MouseEvent;
+    if (mouseEvent.button === 0) {
+      const target = event.target as HTMLElement;
+      if (target && target.closest) {
+        // Nhận diện Web App (VD: nút bấm, thẻ a, hoặc các item của Drive)
+        const interactiveSelector = 'a, button, input, textarea, select, option, details, summary, label, [role="button"], [role="link"], [role="menuitem"], [role="option"], [role="tab"], [role="treeitem"], [contenteditable="true"]';
+        if (target.closest(interactiveSelector)) {
+          // Cho phép event đi qua để Google Drive bắt được click
+          shouldStopPropagation = false;
+        } else {
+          // Bấm vào vùng văn bản bị chặn: Chặn event ko cho truyền xuống site!
+          shouldStopPropagation = true;
+        }
+      }
+    } else if (mouseEvent.button !== 2) {
+      shouldStopPropagation = false;
+    }
+  } else if (event.type === 'keydown') {
+    // Only stop propagation for common shortcuts.
+    const e = event as KeyboardEvent;
+    const isShortcut = (e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 'v', 'p'].includes(e.key.toLowerCase());
+    // Also protect F12, Ctrl+Shift+I
+    const isDevelperTools = e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i');
+    if (!isShortcut && !isDevelperTools) {
+      shouldStopPropagation = false;
+    }
+  } else if (event.type === 'dragstart') {
+    shouldStopPropagation = false;
+  } else if (event.type === 'selectstart') {
+    // BẮT BUỘC chặn selectstart để chống lại các trang web ngăn bôi đen bản địa
+    shouldStopPropagation = true;
   }
 
-  event.stopImmediatePropagation();
+  if (shouldStopPropagation) {
+    event.stopImmediatePropagation();
+  }
 }
 
 /**
@@ -76,11 +114,11 @@ function injectStyleOverride(): void {
   styleOverrideEl = document.createElement('style');
   styleOverrideEl.id = 'enable-copy-ext-override';
   styleOverrideEl.textContent = `
-    * {
-      user-select: auto !important;
-      -webkit-user-select: auto !important;
-      -moz-user-select: auto !important;
-      -ms-user-select: auto !important;
+    html, body, div, p, span, h1, h2, h3, h4, h5, h6, article, section, main, header, footer, aside, nav, blockquote, q, cite, code, pre, td, th {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
     }
   `;
   document.documentElement.appendChild(styleOverrideEl);
@@ -129,8 +167,8 @@ function scheduleInlineFix(el: HTMLElement): void {
 function fixInlineSelection(el: HTMLElement): void {
   const style = el.style;
   SELECTION_DISABLING_PROPS.forEach((prop) => {
-    if (style.getPropertyValue(prop) === 'none') {
-      style.setProperty(prop, 'auto', 'important');
+    if (style.getPropertyValue(prop) === 'none' || style.getPropertyValue(prop) === 'auto') {
+      style.setProperty(prop, 'text', 'important');
     }
   });
 }
@@ -154,10 +192,14 @@ function startSelectionObserver(): void {
       if (mutation.type === 'childList') {
         mutation.addedNodes.forEach((node) => {
           if (node instanceof HTMLElement) {
-            scheduleInlineFix(node);
-            node.querySelectorAll<HTMLElement>('[style]').forEach((child) => {
-              scheduleInlineFix(child);
-            });
+            // Fix the node itself if it has inline style
+            if (node.hasAttribute('style')) {
+              scheduleInlineFix(node);
+            }
+            // Only scan children if really needed, but try to be efficient
+            // Instead of querySelectorAll on every mutation, we can rely on 
+            // the fact that most things are covered by global CSS override.
+            // We'll only do a shallow check or skip if it's too heavy.
           }
         });
       }

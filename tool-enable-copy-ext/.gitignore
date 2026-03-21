@@ -27,3 +27,8 @@ release
 *.njsproj
 *.sln
 *.sw?
+
+# AI Agents & Rulesets
+.heyai-ruleset/
+AGENTS.md
+HEYAI.agent.md
