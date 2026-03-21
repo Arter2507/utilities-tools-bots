@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Test - Block Copy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      line-height: 1.6;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+    .card {
+      max-width: 760px;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    .blocked {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Manual Test - Block Copy</h1>
+    <p class="blocked">
+      Doan van ban nay duoc dat thuoc tinh user-select: none va chan su kien copy/right-click.
+      Thu bat extension de kiem tra kha nang mo khoa.
+    </p>
+    <p>
+      Hay thu boi den doan van tren, bam chuot phai, va su dung Ctrl+C. Khi extension bat,
+      cac thao tac nay se hoat dong va preview co the hien neu da bat.
+    </p>
+    <label for="input">Input bi chan copy:</label>
+    <textarea id="input" class="blocked">Thu copy doan nay. Neu extension bat, ban co the boi den va copy.</textarea>
+  </div>
+
+  <script>
+    const blockedEvents = ['contextmenu', 'copy', 'cut', 'paste', 'selectstart', 'mousedown', 'keydown', 'dragstart']
+    blockedEvents.forEach((eventName) => {
+      document.addEventListener(eventName, (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+      })
+    })
+  </script>
+</body>
+</html>
